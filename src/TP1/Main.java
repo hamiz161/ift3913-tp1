@@ -23,4 +23,24 @@ public class Main {
         }
         return count;
     }
+
+    private static int classe_CLOC(Scanner sc){
+        int count = 0;
+        boolean isComment = false;
+        String ligne;
+        while (sc.hasNext()) {
+            ligne = sc.nextLine();
+            if (ligne.contains("/*")){
+                isComment = true;
+            }
+            if (ligne.contains("*/")){
+                count++;
+                isComment = false;
+            }
+            if(!ligne.equals("") && (ligne.contains("//") || isComment)){
+                count++;
+            }
+        }
+        return count;
+    }
 }
