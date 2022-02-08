@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("C:\\Users\\Samuel\\IdeaProjects\\ift3913-tp1\\src\\TP1\\Main.java");
-        Scanner sc = new Scanner(file);
+        File file = new File("D:\\Téléchargement\\test");
+        //Scanner sc = new Scanner(file);
 
-        System.out.println(classe_LOC(sc));
+        System.out.println(paquet_LOC(file));
     }
 
     private static int classe_LOC(Scanner sc){
@@ -39,6 +39,24 @@ public class Main {
             }
             if(!ligne.equals("") && (ligne.contains("//") || isComment)){
                 count++;
+            }
+        }
+        return count;
+    }
+
+    private static int paquet_LOC(File file) throws FileNotFoundException{
+        int count = 0;
+        String path = file.getAbsolutePath() + "\\";
+        for(String s : file.list()){
+            File file2 = new File(path+s);
+            if(file2.isFile()){
+                if(s.contains(".java")){
+                    Scanner sc = new Scanner(file2);
+                    count += classe_LOC(sc);
+                }
+            }
+            else{
+                count += paquet_LOC(file2);
             }
         }
         return count;
