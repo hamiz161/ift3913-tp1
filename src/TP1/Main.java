@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("D:\\Téléchargement\\test");
+        File file = new File("C:\\Users\\hamiz\\test\\test");
         //Scanner sc = new Scanner(file);
 
         System.out.println(paquet_LOC(file));
@@ -47,6 +47,9 @@ public class Main {
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "\\";
+        if(file.list() == null){
+           return 0;
+        }
         for(String s : file.list()){
             File file2 = new File(path+s);
             if(file2.isFile()){
@@ -57,6 +60,27 @@ public class Main {
             }
             else{
                 count += paquet_LOC(file2);
+            }
+        }
+
+        return count;
+    }
+    private static int paquet_CLOC(File file) throws FileNotFoundException{
+        int count = 0;
+        String path = file.getAbsolutePath() + "\\";
+        if(file.list() == null){
+            return 0;
+        }
+        for(String s : file.list()){
+            File file2 = new File(path+s);
+            if(file2.isFile()){
+                if(s.contains(".java")){
+                    Scanner sc = new Scanner(file2);
+                    count += classe_CLOC(sc);
+                }
+            }
+            else{
+                count += paquet_CLOC(file2);
             }
         }
         return count;
