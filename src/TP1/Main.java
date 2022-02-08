@@ -1,14 +1,24 @@
 package TP1;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("D:\\Téléchargement\\test");
-        System.out.println(paquet_LOC(file));
+
+    private static String classes = "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
+    private static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC,  \n" ;
+
+    public static void main(String[] args) throws IOException {
+//        File file = new File("D:\\Téléchargement\\test");
+//        System.out.println(paquet_LOC(file));
+
+
+        createCSV("classes.csv",classes);
+        createCSV("paquets.csv",paquets);
+
+
+
     }
 
     private static int classe_LOC(File file) throws FileNotFoundException{
@@ -86,6 +96,20 @@ public class Main {
 
     private static float paquet_DC(File file) throws FileNotFoundException{
         return (float) paquet_CLOC(file)/paquet_LOC(file);
+    }
+
+
+    private static void createCSV(String nameFile,String data) throws IOException {
+
+        BufferedWriter bw = new BufferedWriter((new FileWriter(nameFile,true)));
+        bw.write(data);
+
+
+//        StringBuilder sb =new StringBuilder();
+//        sb.append(data);
+//        FileWriter file = new FileWriter(nameFile);
+//        file.write(sb.toString());
+
     }
 
 
