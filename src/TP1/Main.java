@@ -2,17 +2,19 @@ package TP1;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("C:\\Users\\hamiz\\test\\test");
-        //Scanner sc = new Scanner(file);
+        File file = new File("D:\\Téléchargement\\test\\fold2\\3ligne.java");
+        Scanner sc = new Scanner(file);
 
-        System.out.println(paquet_LOC(file));
+        System.out.println(classe_DC(file));
     }
 
-    private static int classe_LOC(Scanner sc){
+    private static int classe_LOC(File file) throws FileNotFoundException{
+        Scanner sc = new Scanner(file);
         int count = 0;
         String ligne;
         while (sc.hasNext()) {
@@ -24,7 +26,8 @@ public class Main {
         return count;
     }
 
-    private static int classe_CLOC(Scanner sc){
+    private static int classe_CLOC(File file) throws FileNotFoundException{
+        Scanner sc = new Scanner(file);
         int count = 0;
         boolean isComment = false;
         String ligne;
@@ -47,15 +50,11 @@ public class Main {
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "\\";
-        if(file.list() == null){
-           return 0;
-        }
-        for(String s : file.list()){
+        for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
             if(file2.isFile()){
                 if(s.contains(".java")){
-                    Scanner sc = new Scanner(file2);
-                    count += classe_LOC(sc);
+                    count += classe_LOC(file2);
                 }
             }
             else{
@@ -68,15 +67,11 @@ public class Main {
     private static int paquet_CLOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "\\";
-        if(file.list() == null){
-            return 0;
-        }
-        for(String s : file.list()){
+        for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
             if(file2.isFile()){
                 if(s.contains(".java")){
-                    Scanner sc = new Scanner(file2);
-                    count += classe_CLOC(sc);
+                    count += classe_CLOC(file2);
                 }
             }
             else{
@@ -85,4 +80,10 @@ public class Main {
         }
         return count;
     }
+
+    private static float classe_DC(File file) throws FileNotFoundException{
+        return (float) classe_CLOC(file)/classe_LOC(file);
+    }
+
+
 }
