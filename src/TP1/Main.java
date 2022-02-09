@@ -1,6 +1,7 @@
 package TP1;
 
 import java.io.*;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -10,10 +11,11 @@ public class Main {
     private final static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC paquet_DC  \n" ;
 
     public static void main(String[] args) throws IOException {
-        File file = new File("D:\\Téléchargement\\test\\fold2\\3ligne.java");
+        File file = new File("D:\\Téléchargement\\testDemo7.java");
         File file2 = new File("D:\\Téléchargement\\test\\fold2\\Fold1\\1ligne.java");
         File dir = new File("D:\\Téléchargement\\test");
 
+/*
 
         createCSV("classes.csv",classes);
         createCSV("paquets.csv",paquets);
@@ -21,6 +23,9 @@ public class Main {
 
         CSVComplet("classes.csv","paquets.csv",dir);
 
+
+*/
+        System.out.println(WMC(file));
 
 
     }
@@ -176,6 +181,32 @@ public class Main {
                 CSVComplet(fichierClasses, fichierPaquets, file2);
             }
         }
+    }
+
+    private static int WMC(File file) throws FileNotFoundException{
+        Scanner sc = new Scanner(file);
+        int count = 0;
+        String ligne;
+        while (sc.hasNext()) {
+            ligne = sc.nextLine().toLowerCase(Locale.ROOT);
+            if(ligne.contains("if")){
+                count++;
+            }
+            if(ligne.contains("case")){
+                count++;
+            }
+            if(ligne.contains("while")){
+                count++;
+            }
+            if(ligne.contains("for")){
+                count++;
+            }
+            if(ligne.contains("catch")){
+                count++;
+            }
+        }
+        return count + 1;
+
     }
 
 
