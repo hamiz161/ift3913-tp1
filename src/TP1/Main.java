@@ -28,8 +28,16 @@ public class Main {
         System.out.println(WMC(file));
 
 
+
+
     }
 
+    /**
+     *
+     * @param file path de classe java
+     * @return int ; nombre de lignes de code d'une classe
+     * @throws FileNotFoundException
+     */
     private static int classe_LOC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
         int count = 0;
@@ -43,6 +51,12 @@ public class Main {
         return count;
     }
 
+    /**
+     *
+     * @param file  path de classe java
+     * @return int : nombre de lignes de code d'une classe qui contiennent des commentaires
+     * @throws FileNotFoundException
+     */
     private static int classe_CLOC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
         int count = 0;
@@ -64,6 +78,12 @@ public class Main {
         return count;
     }
 
+    /**
+     *
+     * @param file paquet path
+     * @return int : nombre de lignes de code d’un paquet (java package) -- la somme des LOC de ses classes
+     * @throws FileNotFoundException
+     */
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "\\";
@@ -82,6 +102,12 @@ public class Main {
         return count;
     }
 
+    /**
+     *
+     * @param file  paquet path
+     * @return int :nombre de lignes de code d’un paquet qui contiennent des commentaires
+     * @throws FileNotFoundException
+     */
     private static int paquet_CLOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "\\";
@@ -99,15 +125,31 @@ public class Main {
         return count;
     }
 
+    /**
+     *
+     * @param file  path de classe java
+     * @return float :densité de commentaires pour une classe : classe_DC = classe_CLOC / classe_LOC
+     * @throws FileNotFoundException
+     */
     private static float classe_DC(File file) throws FileNotFoundException{
         return (float) classe_CLOC(file)/classe_LOC(file);
     }
 
+    /**
+     *
+     * @param file paquet path de classe java
+     * @return float :densité de commentaires pour un paquet : paquet_DC = paquet_CLOC / paquet_LOC
+     * @throws FileNotFoundException
+     */
     private static float paquet_DC(File file) throws FileNotFoundException{
         return (float) paquet_CLOC(file)/paquet_LOC(file);
     }
 
-
+    /**
+     * creation dn fichier CSV avac la premiere ligne  qui contient => chemin|classe|classe_LOC...
+      * @param nameFile nom de fichies CSV ==> classes.CSV
+     * @param data la pemiere ligne "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
+     */
     private static void createCSV(String nameFile,String data)  {
 
         try {
@@ -124,6 +166,11 @@ public class Main {
         }
     }
 
+    /**
+     *
+     * @param nameFile le fichier à modifier
+     * @param file  path de classe java
+     */
     private static void writeClassInCSV(String nameFile,File file){
         final int lengthExtention = 5;
 
@@ -147,6 +194,11 @@ public class Main {
         }
     }
 
+    /**
+     *
+     * @param nameFile le fichier à modifier
+     * @param file path de Paquet java
+     */
     private static void writePaquetInCSV(String nameFile,File file){
         try{
             FileWriter fw = new FileWriter(nameFile,true);
@@ -208,6 +260,34 @@ public class Main {
         return count + 1;
 
     }
+
+    private static int WCP(File file){
+        return 1;
+    }
+
+    /**
+     *
+     * @param file path de classe java
+     * @return degré selon lequel une classe est bien commentée classe_BC = classe_DC / WMC
+     * @throws FileNotFoundException
+     */
+
+    private static float classe_BC(File file) throws FileNotFoundException{
+        return (float) classe_DC(file)/WMC(file);
+    }
+
+
+    /**
+     *
+     * @param file path de paquet
+     * @return degré selon lequel un paquet est bien commentée paquet_BC = paquet_DC / WCP
+     * @throws FileNotFoundException
+     */
+
+    private static float paquet_BC(File file) throws FileNotFoundException{
+        return (float) paquet_DC(file)/WCP(file);
+    }
+
 
 
 
