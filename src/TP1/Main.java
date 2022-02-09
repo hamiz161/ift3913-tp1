@@ -1,22 +1,30 @@
 package TP1;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
 
     private static String classes = "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
-    private static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC,  \n" ;
+    private static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC paquet_DC  \n" ;
 
     public static void main(String[] args) throws IOException {
-//        File file = new File("D:\\Téléchargement\\test");
-//        System.out.println(paquet_LOC(file));
+        File file = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold2\\3ligne.java");
+        File file2 = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold2\\Fold1\\1ligne.java");
+//        File file3 = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold1\\2ligne.java");
+//        System.out.println(classe_LOC(file));
+//        System.out.println(classe_CLOC(file));
+
 
 
         createCSV("classes.csv",classes);
-        createCSV("paquets.csv",paquets);
+        //createCSV("paquets.csv",paquets);
 
+        writeClassInCSV("classes.csv",file);
+        writeClassInCSV("classes.csv",file2);
+       //writeClassInCSV("classes.csv",file3);
 
 
     }
@@ -99,16 +107,50 @@ public class Main {
     }
 
 
-    private static void createCSV(String nameFile,String data) throws IOException {
+    private static void createCSV(String nameFile,String data)  {
 
-        BufferedWriter bw = new BufferedWriter((new FileWriter(nameFile,true)));
-        bw.write(data);
+        try {
+
+            FileWriter fw = new FileWriter(nameFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
+            pw.print(data);
+            pw.flush();
+            pw.close();
+        }
+        catch(Exception e){
+            System.out.println("Chemin de sauvegarde non specifié");
+        }
+    }
+
+    private static void writeClassInCSV(String nameFile,File file){
+
+        final int lengthExtention = 5;
+
+        try{
+
+            FileWriter fw = new FileWriter(nameFile,true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
+
+            // recuperer les noms des classes
+
+            String path = file.getPath();
+            String idStr = path.substring(path.lastIndexOf('\\') + 1);
+            idStr = idStr.substring(0,idStr.length()-lengthExtention);
 
 
-//        StringBuilder sb =new StringBuilder();
-//        sb.append(data);
-//        FileWriter file = new FileWriter(nameFile);
-//        file.write(sb.toString());
+            pw.println(file+","+ idStr+","+classe_LOC(file)+","+classe_CLOC(file)+","+ classe_DC(file));
+
+            pw.flush();
+            pw.close();
+
+
+
+        }  catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
