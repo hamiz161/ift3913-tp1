@@ -1,30 +1,26 @@
 package TP1;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
 
-    private static String classes = "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
-    private static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC paquet_DC  \n" ;
+    private final static String classes = "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
+    private final static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC paquet_DC  \n" ;
 
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold2\\3ligne.java");
-        File file2 = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold2\\Fold1\\1ligne.java");
-//        File file3 = new File("C:\\Users\\hamiz\\IdeaProjects\\ift3913-tp1\\test\\fold1\\2ligne.java");
-//        System.out.println(classe_LOC(file));
-//        System.out.println(classe_CLOC(file));
-
+        File file = new File("D:\\Téléchargement\\test\\fold2\\3ligne.java");
+        File file2 = new File("D:\\Téléchargement\\test\\fold2\\Fold1\\1ligne.java");
+        File dir = new File("D:\\Téléchargement\\test");
 
 
         createCSV("classes.csv",classes);
-        //createCSV("paquets.csv",paquets);
+        createCSV("paquets.csv",paquets);
 
-        writeClassInCSV("classes.csv",file);
-        writeClassInCSV("classes.csv",file2);
-       //writeClassInCSV("classes.csv",file3);
+
+        CSVComplet("classes.csv","paquets.csv",dir);
+
 
 
     }
@@ -124,11 +120,9 @@ public class Main {
     }
 
     private static void writeClassInCSV(String nameFile,File file){
-
         final int lengthExtention = 5;
 
         try{
-
             FileWriter fw = new FileWriter(nameFile,true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter pw = new PrintWriter(bw);
@@ -139,19 +133,49 @@ public class Main {
             String idStr = path.substring(path.lastIndexOf('\\') + 1);
             idStr = idStr.substring(0,idStr.length()-lengthExtention);
 
-
             pw.println(file+","+ idStr+","+classe_LOC(file)+","+classe_CLOC(file)+","+ classe_DC(file));
 
             pw.flush();
             pw.close();
-
-
-
         }  catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private static void writePaquetInCSV(String nameFile,File file){
+        try{
+            FileWriter fw = new FileWriter(nameFile,true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
 
+            // recuperer les noms des classes
+
+            String path = file.getPath();
+            String idStr = path.substring(path.lastIndexOf('\\') + 1);
+
+            pw.println(file+","+ idStr+","+paquet_LOC(file)+","+paquet_CLOC(file)+","+ paquet_DC(file));
+
+            pw.flush();
+            pw.close();
+        }  catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void CSVComplet(String fichierClasses, String fichierPaquets, File file){
+
+        for(String s : Objects.requireNonNull(file.list())){
+            File file2 = new File(file.getAbsolutePath()+"\\"+s);
+            if(file2.isFile()){
+                if(s.contains(".java")){
+                    writeClassInCSV(fichierClasses,file2);
+                }
+            }
+            else{
+                writePaquetInCSV(fichierPaquets, file2);
+                CSVComplet(fichierClasses, fichierPaquets, file2);
+            }
+        }
     }
 
 
