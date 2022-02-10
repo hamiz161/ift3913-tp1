@@ -10,27 +10,22 @@ public class Main {
     private final static String classes = "chemin, class, classe_LOC, classe_CLOC, classe_DC, WMC, classe_BC \n";
     private final static String paquets = "chemin, paquet, paquet_LOC, paquet_CLOC, paquet_DC, WCP, paquet_BC \n" ;
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("D:\\Téléchargement\\testDemo7.java");
-        File file2 = new File("D:\\Téléchargement\\test\\fold2\\Fold1\\1ligne.java");
-        File dir = new File("D:\\Téléchargement\\jfreechart-master");
+    public static void main(String[] args) {
+        File dir = new File(args[0]);
 
-        //System.out.println(WCP(dir));
 
         createCSV("classes.csv",classes);
         createCSV("paquets.csv",paquets);
 
-
         CSVComplet("classes.csv","paquets.csv",dir);
-
 
     }
 
     /**
      *
-     * @param file path de classe java
-     * @return int ; nombre de lignes de code d'une classe
-     * @throws FileNotFoundException
+     * @param file Classe java a calculer le nombre de lignes
+     * @return int ; nombre de lignes de code d une classe
+     * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
      */
     private static int classe_LOC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
@@ -47,9 +42,9 @@ public class Main {
 
     /**
      *
-     * @param file  path de classe java
-     * @return int : nombre de lignes de code d'une classe qui contiennent des commentaires
-     * @throws FileNotFoundException
+     * @param file  Classe java a calculer le nombre de lignes de commentaires
+     * @return int : nombre de lignes de code d une classe qui contiennent des commentaires
+     * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
      */
     private static int classe_CLOC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
@@ -74,9 +69,9 @@ public class Main {
 
     /**
      *
-     * @param file paquet path
-     * @return int : nombre de lignes de code d’un paquet (java package) -- la somme des LOC de ses classes
-     * @throws FileNotFoundException
+     * @param file Paquet qui contient les classes java a calculer le LOC
+     * @return int : Nombre de lignes de code d’un paquet (java package) -- la somme des LOC de ses classes
+     * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
      */
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
@@ -98,9 +93,9 @@ public class Main {
 
     /**
      *
-     * @param file  paquet path
-     * @return int :nombre de lignes de code d’un paquet qui contiennent des commentaires
-     * @throws FileNotFoundException
+     * @param file  Paquet qui contient les classes java a calculer le CLOC
+     * @return int :Nombre de lignes de code d’un paquet qui contiennent des commentaires
+     * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
      */
     private static int paquet_CLOC(File file) throws FileNotFoundException{
         int count = 0;
@@ -121,9 +116,9 @@ public class Main {
 
     /**
      *
-     * @param file  path de classe java
-     * @return float :densité de commentaires pour une classe : classe_DC = classe_CLOC / classe_LOC
-     * @throws FileNotFoundException
+     * @param file  Classe java a calculer la densite de commentaires
+     * @return float : Densite de commentaires pour une classe : classe_DC = classe_CLOC / classe_LOC
+     * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
      */
     private static float classe_DC(File file) throws FileNotFoundException{
         return (float) classe_CLOC(file)/classe_LOC(file);
@@ -131,17 +126,17 @@ public class Main {
 
     /**
      *
-     * @param file paquet path de classe java
-     * @return float :densité de commentaires pour un paquet : paquet_DC = paquet_CLOC / paquet_LOC
-     * @throws FileNotFoundException
+     * @param file Paquet java a calculer la densite de commentaires
+     * @return float : Densite de commentaires pour un paquet : paquet_DC = paquet_CLOC / paquet_LOC
+     * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
      */
     private static float paquet_DC(File file) throws FileNotFoundException{
         return (float) paquet_CLOC(file)/paquet_LOC(file);
     }
 
     /**
-     * creation dn fichier CSV avac la premiere ligne  qui contient => chemin|classe|classe_LOC...
-      * @param nameFile nom de fichies CSV ==> classes.CSV
+     * creation d un fichier CSV avec la premiere ligne qui contient chemin|classe|classe_LOC...
+      * @param nameFile nom de fichiers CSV pour classes.CSV
      * @param data la pemiere ligne "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
      */
     private static void createCSV(String nameFile,String data)  {
@@ -156,14 +151,14 @@ public class Main {
             pw.close();
         }
         catch(Exception e){
-            System.out.println("Chemin de sauvegarde non specifié");
+            System.out.println("Chemin de sauvegarde non specifie");
         }
     }
 
     /**
      *
-     * @param nameFile le fichier à modifier
-     * @param file  path de classe java
+     * @param nameFile Le fichier a modifier
+     * @param file  Classe dont on doit calculer le CSV
      */
     private static void writeClassInCSV(String nameFile,File file){
         final int lengthExtention = 5;
@@ -190,8 +185,8 @@ public class Main {
 
     /**
      *
-     * @param nameFile le fichier à modifier
-     * @param file path de Paquet java
+     * @param nameFile le fichier a modifier
+     * @param file Paquet dont on doit calculer le CSV
      */
     private static void writePaquetInCSV(String nameFile,File file){
         try{
@@ -213,6 +208,12 @@ public class Main {
         }
     }
 
+    /**
+     *
+     * @param fichierClasses Nom du fichier CSV des classes
+     * @param fichierPaquets Nom du fichier CSV des paquets
+     * @param file Dossier dont on veut creer les fichier CSV
+     */
     private static void CSVComplet(String fichierClasses, String fichierPaquets, File file){
 
         for(String s : Objects.requireNonNull(file.list())){
@@ -229,6 +230,12 @@ public class Main {
         }
     }
 
+    /**
+     *
+     * @param file Classe a calculer
+     * @return Somme ponderee des complexites cyclomatiques de McCabe de toutes les methodes d une classe
+     * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
+     */
     private static int WMC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
         int count = 0;
@@ -255,6 +262,12 @@ public class Main {
 
     }
 
+    /**
+     *
+     * @param file Paquet a calculer
+     * @return Somme des WMC de toutes les classes d un paquet et les WCP de ses sous-paquets
+     * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
+     */
     private static int WCP(File file) throws FileNotFoundException {
         int count = 0;
         for(String s : Objects.requireNonNull(file.list())){
@@ -273,25 +286,23 @@ public class Main {
 
     /**
      *
-     * @param file path de classe java
-     * @return degré selon lequel une classe est bien commentée classe_BC = classe_DC / WMC
-     * @throws FileNotFoundException
+     * @param file Classe java a calculer le degre de BC
+     * @return degre selon lequel une classe est bien commentee classe_BC = classe_DC / WMC
+     * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
      */
-
     private static float classe_BC(File file) throws FileNotFoundException{
-        return (float) classe_DC(file)/WMC(file);
+        return classe_DC(file)/WMC(file);
     }
 
 
     /**
      *
-     * @param file path de paquet
-     * @return degré selon lequel un paquet est bien commentée paquet_BC = paquet_DC / WCP
-     * @throws FileNotFoundException
+     * @param file Paquet java a calculer le degre de BC
+     * @return degre selon lequel un paquet est bien commentee paquet_BC = paquet_DC / WCP
+     * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
      */
-
     private static float paquet_BC(File file) throws FileNotFoundException{
-        return (float) paquet_DC(file)/WCP(file);
+        return paquet_DC(file)/WCP(file);
     }
 
 
