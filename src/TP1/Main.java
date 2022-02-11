@@ -75,7 +75,7 @@ public class Main {
      */
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
-        String path = file.getAbsolutePath() + "\\";
+        String path = file.getAbsolutePath() + "//";
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
             if(file2.isFile()){
@@ -99,7 +99,7 @@ public class Main {
      */
     private static int paquet_CLOC(File file) throws FileNotFoundException{
         int count = 0;
-        String path = file.getAbsolutePath() + "\\";
+        String path = file.getAbsolutePath() + "//";
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
             if(file2.isFile()){
@@ -217,7 +217,7 @@ public class Main {
     private static void CSVComplet(String fichierClasses, String fichierPaquets, File file){
 
         for(String s : Objects.requireNonNull(file.list())){
-            File file2 = new File(file.getAbsolutePath()+"\\"+s);
+            File file2 = new File(file.getAbsolutePath()+"//"+s);
             if(file2.isFile()){
                 if(s.contains(".java")){
                     writeClassInCSV(fichierClasses,file2);
@@ -271,7 +271,7 @@ public class Main {
     private static int WCP(File file) throws FileNotFoundException {
         int count = 0;
         for(String s : Objects.requireNonNull(file.list())){
-            File file2 = new File(file.getAbsolutePath()+"\\"+s);
+            File file2 = new File(file.getAbsolutePath()+"//"+s);
             if(file2.isFile()){
                 if(s.contains(".java")){
                     count += WMC(file2);
