@@ -22,6 +22,7 @@ public class Main {
     }
 
     /**
+     * Calcule le nombre de ligne de code d'une classe
      *
      * @param file Classe java a calculer le nombre de lignes
      * @return int ; nombre de lignes de code d une classe
@@ -31,6 +32,7 @@ public class Main {
         Scanner sc = new Scanner(file);
         int count = 0;
         String ligne;
+        //Regarde si chaque ligne est vide sinon ajoute 1 au count
         while (sc.hasNext()) {
             ligne = sc.nextLine();
             if(!ligne.equals("")){
@@ -41,6 +43,7 @@ public class Main {
     }
 
     /**
+     * Calcule le nombre de lignes de code d’une classe qui contiennent des commentaires
      *
      * @param file  Classe java a calculer le nombre de lignes de commentaires
      * @return int : nombre de lignes de code d une classe qui contiennent des commentaires
@@ -51,6 +54,7 @@ public class Main {
         int count = 0;
         boolean isComment = false;
         String ligne;
+        // Regarde chaque ligne pour savoir si elle est commentee
         while (sc.hasNext()) {
             ligne = sc.nextLine();
             if (ligne.contains("/*")){
@@ -68,6 +72,7 @@ public class Main {
     }
 
     /**
+     * Calcule le nombre de lignes de code d’un paquet
      *
      * @param file Paquet qui contient les classes java a calculer le LOC
      * @return int : Nombre de lignes de code d’un paquet (java package) -- la somme des LOC de ses classes
@@ -76,13 +81,16 @@ public class Main {
     private static int paquet_LOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "//";
+        //Regarde chaque fichier et dossier dans le paquet
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
+            //Si c est un fichier .java appelle classe_LOC
             if(file2.isFile()){
                 if(s.contains(".java")){
                     count += classe_LOC(file2);
                 }
             }
+            // Si c'est un dossier appelle recursivement la méthode
             else{
                 count += paquet_LOC(file2);
             }
@@ -92,6 +100,7 @@ public class Main {
     }
 
     /**
+     * Calcule nombre de lignes de code d’un paquet qui contiennent des commentaires
      *
      * @param file  Paquet qui contient les classes java a calculer le CLOC
      * @return int :Nombre de lignes de code d’un paquet qui contiennent des commentaires
@@ -100,13 +109,16 @@ public class Main {
     private static int paquet_CLOC(File file) throws FileNotFoundException{
         int count = 0;
         String path = file.getAbsolutePath() + "//";
+        //Regarde chaque fichier et dossier dans le paquet
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(path+s);
+            //Si c est un fichier .java appelle classe_CLOC
             if(file2.isFile()){
                 if(s.contains(".java")){
                     count += classe_CLOC(file2);
                 }
             }
+            // Si c'est un dossier appelle recursivement la méthode
             else{
                 count += paquet_CLOC(file2);
             }
@@ -115,6 +127,7 @@ public class Main {
     }
 
     /**
+     * Calcule la densite de commentaires pour une classe
      *
      * @param file  Classe java a calculer la densite de commentaires
      * @return float : Densite de commentaires pour une classe : classe_DC = classe_CLOC / classe_LOC
@@ -125,6 +138,7 @@ public class Main {
     }
 
     /**
+     * Calcule la densite de commentaires pour un paquet
      *
      * @param file Paquet java a calculer la densite de commentaires
      * @return float : Densite de commentaires pour un paquet : paquet_DC = paquet_CLOC / paquet_LOC
@@ -136,7 +150,8 @@ public class Main {
 
     /**
      * creation d un fichier CSV avec la premiere ligne qui contient chemin|classe|classe_LOC...
-      * @param nameFile nom de fichiers CSV pour classes.CSV
+     *
+     * @param nameFile nom de fichiers CSV pour classes.CSV
      * @param data la pemiere ligne "chemin, class, classe_LOC, classe_CLOC, classe_DC \n";
      */
     private static void createCSV(String nameFile,String data)  {
@@ -156,6 +171,7 @@ public class Main {
     }
 
     /**
+     * Ecrit les informations dans le fichier csv de classe
      *
      * @param nameFile Le fichier a modifier
      * @param file  Classe dont on doit calculer le CSV
@@ -184,6 +200,7 @@ public class Main {
     }
 
     /**
+     * Ecrit les informations dans le fichier csv de paquet
      *
      * @param nameFile le fichier a modifier
      * @param file Paquet dont on doit calculer le CSV
@@ -209,13 +226,14 @@ public class Main {
     }
 
     /**
+     * Cree recursivement les deux fichiers csv
      *
      * @param fichierClasses Nom du fichier CSV des classes
      * @param fichierPaquets Nom du fichier CSV des paquets
      * @param file Dossier dont on veut creer les fichier CSV
      */
     private static void CSVComplet(String fichierClasses, String fichierPaquets, File file){
-
+        //regarde chaque fichier dans le dossier recu en entree
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(file.getAbsolutePath()+"//"+s);
             if(file2.isFile()){
@@ -223,6 +241,7 @@ public class Main {
                     writeClassInCSV(fichierClasses,file2);
                 }
             }
+            //Si on trouve un sous dossier on appelle recursivement la fonction apres l'avoir note dans le fichier csv
             else{
                 writePaquetInCSV(fichierPaquets, file2);
                 CSVComplet(fichierClasses, fichierPaquets, file2);
@@ -231,6 +250,7 @@ public class Main {
     }
 
     /**
+     * Calcule t la somme pondérée des complexités cyclomatiques de McCabe de toutes les méthodes d'une classe
      *
      * @param file Classe a calculer
      * @return Somme ponderee des complexites cyclomatiques de McCabe de toutes les methodes d une classe
@@ -238,31 +258,33 @@ public class Main {
      */
     private static int WMC(File file) throws FileNotFoundException{
         Scanner sc = new Scanner(file);
-        int count = 0;
+        int predicats = 0;
         String ligne;
+        //Calcule le nombre de predicats
         while (sc.hasNext()) {
             ligne = sc.nextLine().toLowerCase(Locale.ROOT);
             if(ligne.contains("if")){
-                count++;
+                predicats++;
             }
             if(ligne.contains("case")){
-                count++;
+                predicats++;
             }
             if(ligne.contains("while")){
-                count++;
+                predicats++;
             }
             if(ligne.contains("for")){
-                count++;
+                predicats++;
             }
             if(ligne.contains("catch")){
-                count++;
+                predicats++;
             }
         }
-        return count + 1;
+        return predicats + 1;
 
     }
 
     /**
+     * Calcule la somme des WMC de toutes les classes d’un paquet et les WCP de ses sous-paquets.
      *
      * @param file Paquet a calculer
      * @return Somme des WMC de toutes les classes d un paquet et les WCP de ses sous-paquets
@@ -270,6 +292,7 @@ public class Main {
      */
     private static int WCP(File file) throws FileNotFoundException {
         int count = 0;
+        //regarde chaque fichier dans le dossier recu en entree
         for(String s : Objects.requireNonNull(file.list())){
             File file2 = new File(file.getAbsolutePath()+"//"+s);
             if(file2.isFile()){
@@ -285,8 +308,9 @@ public class Main {
     }
 
     /**
+     * Calcule le degré selon lequel une classe est bien commentee
      *
-     * @param file Classe java a calculer le degre de BC
+     * @param file Classe java a calculer le degre selon lequel une classe est bien commentee
      * @return degre selon lequel une classe est bien commentee classe_BC = classe_DC / WMC
      * @throws FileNotFoundException Si le fichier donnee est null ou est un dossier
      */
@@ -296,8 +320,9 @@ public class Main {
 
 
     /**
+     * Calcule le degré selon lequel un paquet est bien commentée
      *
-     * @param file Paquet java a calculer le degre de BC
+     * @param file Paquet java a calculer le degré selon lequel un paquet est bien commentée
      * @return degre selon lequel un paquet est bien commentee paquet_BC = paquet_DC / WCP
      * @throws FileNotFoundException Si le paquet donnee est null ou est un fichier
      */
